@@ -50,8 +50,45 @@ int main(){
     int Hum_dims[RANK_data];
     int Tilt_dims[RANK_data];
     int AlphaCounts_dims[RANK_data];
+	/* variable data*/
+//    int Radon_data[time_len];
 
-	/* DEFINE MODE */
+	
+
+	
+	/*Abrimos el fichero de entrada*/
+	fid=fopen(NOMBREFICHERO,"r");
+	/*Leemos lineas mientras la funcion fgets no devuelva NULL*/
+	/* http://www.cplusplus.com/reference/cstdio/fgets/ */
+	seccionDatos=0;
+	i=0;
+	while(fgets(linea,MAXLINEA,fid)>0){
+		
+		if(seccionDatos){
+			/*Time	Radon	Error	Temp.	Hum.	Tilt	Alpha Counts*/
+			/*11/7/2012 14:35	14	100	19.5	49	249	1*/
+			sscanf(linea,"%d/%d/%d %d:%d %f %f %f %f %f %d",&mes,&dia,&anio,&hora,&min,&radon,&error,&temp,&hum,&tilt,&alpha);
+			//printf("mes:%d dia:%d anio:%d hora:%d min:%d radon:%g error:%g temp:%g hum:%g til:%g count:%d\n",mes,dia,anio,hora,min,radon,error,temp,hum,tilt,alpha);
+
+/* assign variable data */
+/*   {
+     Radon_data[i] = radon ;
+    size_t data_startset[2] = {0, 0} ;
+    size_t data_countset[2] = {6, 12} ;
+    stat = nc_put_vara(ncid, data_id, data_startset, data_countset, data_data);
+    check_err(stat,__LINE__,__FILE__);
+    }
+*/
+
+			i++;
+		}else { 
+			// Sacamos numero de registros, longitud de variables
+			if(strncmp(linea,"Data Records",strlen("Data Records"))==0){
+				sscanf(linea,"Data Records %d",&dimsize);
+				time_len = dimsize;
+
+
+/* DEFINE MODE */
     stat = nc_create("RadonMembrana.nc", NC_CLOBBER, &ncid);
     check_err(stat,__LINE__,__FILE__);
 
@@ -83,25 +120,8 @@ int main(){
     stat = nc_enddef (ncid);
     check_err(stat,__LINE__,__FILE__);
 
-	
-	/*Abrimos el fichero de entrada*/
-	fid=fopen(NOMBREFICHERO,"r");
-	/*Leemos lineas mientras la funcion fgets no devuelva NULL*/
-	/* http://www.cplusplus.com/reference/cstdio/fgets/ */
-	seccionDatos=0;
-	
-	while(fgets(linea,MAXLINEA,fid)>0){
-		
-		if(seccionDatos){
-			/*Time	Radon	Error	Temp.	Hum.	Tilt	Alpha Counts*/
-			/*11/7/2012 14:35	14	100	19.5	49	249	1*/
-			sscanf(linea,"%d/%d/%d %d:%d %f %f %f %f %f %d",&mes,&dia,&anio,&hora,&min,&radon,&error,&temp,&hum,&tilt,&alpha);
-			//printf("mes:%d dia:%d anio:%d hora:%d min:%d radon:%g error:%g temp:%g hum:%g til:%g count:%d\n",mes,dia,anio,hora,min,radon,error,temp,hum,tilt,alpha);
-		}else { 
-			// Sacamos numero de registros, longitud de variables
-			if(strncmp(linea,"Data Records",strlen("Data Records"))==0){
-				sscanf(linea,"Data Records %d",&dimsize);
-				time_len = dimsize;
+
+
 				//printf("%d",dimsize);
 			/* Buscamos la linea que empiece por  Time*/
 			}else if(strncmp(linea,"Time",strlen("Time"))==0){
