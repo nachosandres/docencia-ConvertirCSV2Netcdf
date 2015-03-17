@@ -20,10 +20,11 @@ check_err(const int stat, const int line, const char *file) {
 int main(){
 	FILE* fid;
 	char linea[MAXLINEA];
-	int i,seccionDatos;
+	int seccionDatos;
 	int dimsize;
 	int mes,dia,anio,hora,min,alpha;
 	float radon,error,temp,hum,tilt;
+	size_t i=0;
 	
 	/*DECLARATION OF NETCDF VARIABLES*/
 	int  stat;  /* return status */
@@ -51,7 +52,7 @@ int main(){
     int Tilt_dims[RANK_data];
     int AlphaCounts_dims[RANK_data];
 	/* variable data*/
-//    int Radon_data[time_len];
+    //int Radon_data[time_len];
 
 	
 
@@ -61,24 +62,33 @@ int main(){
 	/*Leemos lineas mientras la funcion fgets no devuelva NULL*/
 	/* http://www.cplusplus.com/reference/cstdio/fgets/ */
 	seccionDatos=0;
-	i=0;
+
+	
 	while(fgets(linea,MAXLINEA,fid)>0){
 		
 		if(seccionDatos){
 			/*Time	Radon	Error	Temp.	Hum.	Tilt	Alpha Counts*/
 			/*11/7/2012 14:35	14	100	19.5	49	249	1*/
 			sscanf(linea,"%d/%d/%d %d:%d %f %f %f %f %f %d",&mes,&dia,&anio,&hora,&min,&radon,&error,&temp,&hum,&tilt,&alpha);
-			//printf("mes:%d dia:%d anio:%d hora:%d min:%d radon:%g error:%g temp:%g hum:%g til:%g count:%d\n",mes,dia,anio,hora,min,radon,error,temp,hum,tilt,alpha);
+			//printf("mes:%d dia:%d anio:%d hora:%d min:%d radon:%g error:%g temp:%g hum:%g til:%g count:%d\n", mes, dia, anio, hora, min, radon, error, temp, hum, tilt, alpha);
+			
+						
+			/* assign variable data */
+ 			{
+    		stat = nc_put_var1_float(ncid, Radon_id, &i, &radon);
+   			check_err(stat,__LINE__,__FILE__);
+			stat = nc_put_var1_float(ncid, Error_id, &i, &error);
+   			check_err(stat,__LINE__,__FILE__);
+			stat = nc_put_var1_float(ncid, Temp_id, &i, &temp);
+   			check_err(stat,__LINE__,__FILE__);
+			stat = nc_put_var1_float(ncid, Hum_id, &i, &hum);
+   			check_err(stat,__LINE__,__FILE__);
+			stat = nc_put_var1_float(ncid, Tilt_id, &i, &tilt);
+   			check_err(stat,__LINE__,__FILE__);
+			stat = nc_put_var1_int(ncid, AlphaCounts_id, &i, &alpha);
+   			check_err(stat,__LINE__,__FILE__);
+  			  }
 
-/* assign variable data */
-/*   {
-     Radon_data[i] = radon ;
-    size_t data_startset[2] = {0, 0} ;
-    size_t data_countset[2] = {6, 12} ;
-    stat = nc_put_vara(ncid, data_id, data_startset, data_countset, data_data);
-    check_err(stat,__LINE__,__FILE__);
-    }
-*/
 
 			i++;
 		}else { 
@@ -86,6 +96,7 @@ int main(){
 			if(strncmp(linea,"Data Records",strlen("Data Records"))==0){
 				sscanf(linea,"Data Records %d",&dimsize);
 				time_len = dimsize;
+
 
 
 /* DEFINE MODE */
