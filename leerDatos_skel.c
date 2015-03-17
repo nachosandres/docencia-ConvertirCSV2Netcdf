@@ -1,9 +1,19 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include<netcdf.h>
 
 #define NOMBREFICHERO "Membrana Texsa PVC negro arriba.txt"
 #define MAXLINEA 1024
+
+void
+check_err(const int stat, const int line, const char *file) {
+    if (stat != NC_NOERR) {
+        (void)fprintf(stderr,"line %d of %s: %s\n", line, file, nc_strerror(stat));
+        fflush(stderr);
+        exit(1);
+    }
+}
 
 /* http://www.cplusplus.com/reference */
 
@@ -21,8 +31,9 @@ int main(){
 
     /* dimension ids */
     int time_dim;
-    /* dimension lengths */
-    size_t time_len = dimsize;
+	/* dimension lengths */
+    size_t time_len;
+
     /* variable ids */
     int Radon_id;
     int Error_id;
@@ -90,8 +101,7 @@ int main(){
 			// Sacamos numero de registros, longitud de variables
 			if(strncmp(linea,"Data Records",strlen("Data Records"))==0){
 				sscanf(linea,"Data Records %d",&dimsize);
-				/* dimension lengths */
-    			size_t time_len = dimsize;
+				time_len = dimsize;
 				//printf("%d",dimsize);
 			/* Buscamos la linea que empiece por  Time*/
 			}else if(strncmp(linea,"Time",strlen("Time"))==0){
