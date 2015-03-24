@@ -99,37 +99,60 @@ int main(){
 
 
 
-/* DEFINE MODE */
-    stat = nc_create("RadonMembrana.nc", NC_CLOBBER, &ncid);
-    check_err(stat,__LINE__,__FILE__);
+				/* DEFINE MODE */
+   				stat = nc_create("RadonMembrana.nc", NC_CLOBBER, &ncid);
+   				check_err(stat,__LINE__,__FILE__);
 
-    /* define dimensions */
-    stat = nc_def_dim(ncid, "time", time_len, &time_dim);
-    check_err(stat,__LINE__,__FILE__);
+   				/* define dimensions */
+   				stat = nc_def_dim(ncid, "time", time_len, &time_dim);
+   				check_err(stat,__LINE__,__FILE__);
 
-    /* define variables */
-    Radon_dims[0] = time_dim;
-    stat = nc_def_var(ncid, "Radon", NC_INT, RANK_data, Radon_dims, &Radon_id);
-    check_err(stat,__LINE__,__FILE__);
-    Error_dims[0] = time_dim;
-    stat = nc_def_var(ncid, "Error", NC_INT, RANK_data, Error_dims, &Error_id);
-    check_err(stat,__LINE__,__FILE__);
-    Temp_dims[0] = time_dim;
-    stat = nc_def_var(ncid, "Temp", NC_INT, RANK_data, Temp_dims, &Temp_id);
-    check_err(stat,__LINE__,__FILE__);
-    Hum_dims[0] = time_dim;
-    stat = nc_def_var(ncid, "Hum", NC_INT, RANK_data, Hum_dims, &Hum_id);
-    check_err(stat,__LINE__,__FILE__);
-    Tilt_dims[0] = time_dim;
-    stat = nc_def_var(ncid, "Tilt", NC_INT, RANK_data, Tilt_dims, &Tilt_id);
-    check_err(stat,__LINE__,__FILE__);
-    AlphaCounts_dims[0] = time_dim;
-    stat = nc_def_var(ncid, "AlphaCounts", NC_INT, RANK_data, AlphaCounts_dims, &AlphaCounts_id);
-    check_err(stat,__LINE__,__FILE__);
+   				/* define variables */
+   				Radon_dims[0] = time_dim;
+  				stat = nc_def_var(ncid, "Radon", NC_INT, RANK_data, Radon_dims, &Radon_id);
+  				check_err(stat,__LINE__,__FILE__);
+  				Error_dims[0] = time_dim;
+  				stat = nc_def_var(ncid, "Error", NC_INT, RANK_data, Error_dims, &Error_id);
+  				check_err(stat,__LINE__,__FILE__);
+  				Temp_dims[0] = time_dim;
+				stat = nc_def_var(ncid, "Temp", NC_INT, RANK_data, Temp_dims, &Temp_id);
+   				check_err(stat,__LINE__,__FILE__);
+   				Hum_dims[0] = time_dim;
+   				stat = nc_def_var(ncid, "Hum", NC_INT, RANK_data, Hum_dims, &Hum_id);
+   				check_err(stat,__LINE__,__FILE__);
+   				Tilt_dims[0] = time_dim;
+   				stat = nc_def_var(ncid, "Tilt", NC_INT, RANK_data, Tilt_dims, &Tilt_id);
+   				check_err(stat,__LINE__,__FILE__);
+   				AlphaCounts_dims[0] = time_dim;
+   				stat = nc_def_var(ncid, "AlphaCounts", NC_INT, RANK_data, AlphaCounts_dims, &AlphaCounts_id);
+   				check_err(stat,__LINE__,__FILE__);
 
-    /* leave define mode */
-    stat = nc_enddef (ncid);
-    check_err(stat,__LINE__,__FILE__);
+
+				/* define attributes */
+				char Radon_long[]="Desintegraciones de radon por unidad de volumen y de tiempo";
+				char Error_long[]="Porcentaje de incertidumbre en medidas de desintegracion de radon";
+				char Temp_long[]="Temperatura ambiente";
+				char Hum_long[]="Humedad relativa";
+				char Tilt_long[]="Inclinacion";
+				char AlphaCounts_long[]="Cuentas de particulas alpha";
+
+				stat=nc_put_att_text(ncid, Radon_id, "long_name",strlen(Radon_long),Radon_long);
+				check_err(stat,__LINE__,__FILE__);
+				stat=nc_put_att_text(ncid, Error_id, "long_name",strlen(Error_long),Error_long);
+				check_err(stat,__LINE__,__FILE__);
+				stat=nc_put_att_text(ncid, Temp_id, "long_name",strlen(Temp_long),Temp_long);
+				check_err(stat,__LINE__,__FILE__);
+				stat=nc_put_att_text(ncid, Hum_id, "long_name",strlen(Hum_long),Hum_long);
+				check_err(stat,__LINE__,__FILE__);
+				stat=nc_put_att_text(ncid, Tilt_id, "long_name",strlen(Tilt_long),Tilt_long);
+				check_err(stat,__LINE__,__FILE__);
+				stat=nc_put_att_text(ncid, AlphaCounts_id, "long_name",strlen(AlphaCounts_long),AlphaCounts_long);
+				check_err(stat,__LINE__,__FILE__);
+				
+
+   				/* leave define mode */
+   				stat = nc_enddef (ncid);
+   				check_err(stat,__LINE__,__FILE__);
 
 
 
