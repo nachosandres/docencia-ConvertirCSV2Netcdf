@@ -91,7 +91,8 @@ int main(){
 
 
 			i++;
-		}else { 
+		}else {
+			
 			// Sacamos numero de registros, longitud de variables
 			if(strncmp(linea,"Data Records",strlen("Data Records"))==0){
 				sscanf(linea,"Data Records %d",&dimsize);
@@ -129,10 +130,18 @@ int main(){
 
 
 				/* define attributes */
+					/* global title */
+				char title[]="Medida de desintegracion de radon a traves de membrana de PVC";
+				stat=nc_put_att_text(ncid, NC_GLOBAL, "title",strlen(title),title);
+				check_err(stat,__LINE__,__FILE__);
+
+					/* long and standard names */
 				char Radon_long[]="Desintegraciones de radon por unidad de volumen y de tiempo";
 				char Error_long[]="Porcentaje de incertidumbre en medidas de desintegracion de radon";
 				char Temp_long[]="Temperatura ambiente";
+				char Temp_std[]="air_temperature";
 				char Hum_long[]="Humedad relativa";
+				char Hum_std[]="relative_humidity";
 				char Tilt_long[]="Inclinacion";
 				char AlphaCounts_long[]="Cuentas de particulas alpha";
 
@@ -142,11 +151,35 @@ int main(){
 				check_err(stat,__LINE__,__FILE__);
 				stat=nc_put_att_text(ncid, Temp_id, "long_name",strlen(Temp_long),Temp_long);
 				check_err(stat,__LINE__,__FILE__);
+				stat=nc_put_att_text(ncid, Temp_id, "standard_name",strlen(Temp_std),Temp_std);
+				check_err(stat,__LINE__,__FILE__);
 				stat=nc_put_att_text(ncid, Hum_id, "long_name",strlen(Hum_long),Hum_long);
+				check_err(stat,__LINE__,__FILE__);
+				stat=nc_put_att_text(ncid, Hum_id, "standard_name",strlen(Hum_std),Hum_std);
 				check_err(stat,__LINE__,__FILE__);
 				stat=nc_put_att_text(ncid, Tilt_id, "long_name",strlen(Tilt_long),Tilt_long);
 				check_err(stat,__LINE__,__FILE__);
 				stat=nc_put_att_text(ncid, AlphaCounts_id, "long_name",strlen(AlphaCounts_long),AlphaCounts_long);
+				check_err(stat,__LINE__,__FILE__);
+
+					/* units */
+				char Radon_units[]="Bq/m^3";
+				char Error_units[]="%";
+				char Temp_units[]="Celsius";
+				char Hum_units[]="%";
+
+				stat=nc_put_att_text(ncid, Radon_id, "units",strlen(Radon_units),Radon_units);
+				check_err(stat,__LINE__,__FILE__);
+				stat=nc_put_att_text(ncid, Error_id, "units",strlen(Error_units),Error_units);
+				check_err(stat,__LINE__,__FILE__);
+				stat=nc_put_att_text(ncid, Temp_id, "units",strlen(Temp_units),Temp_units);
+				check_err(stat,__LINE__,__FILE__);
+				stat=nc_put_att_text(ncid, Hum_id, "units",strlen(Hum_units),Hum_units);
+				check_err(stat,__LINE__,__FILE__);
+				
+					/* ancillary variables */
+				char Radon_anc_var[]="Error";
+				stat=nc_put_att_text(ncid, Radon_id, "ancillary_variables",strlen(Radon_anc_var),Radon_anc_var);
 				check_err(stat,__LINE__,__FILE__);
 				
 
