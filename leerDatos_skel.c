@@ -21,13 +21,16 @@ int main(){
 	FILE* fid;
 	char linea[MAXLINEA];
 	int seccionDatos;
-	int dimsize;
+
 	int mes,dia,anio,hora,min,alpha;
 	float radon,error,temp,hum,tilt;
 	size_t i=0;
+
+	int dimsize;
+	double radon_avg,avg_error,min_radon,max_radon, radon_exposure;
 	
 	/*DECLARATION OF NETCDF VARIABLES*/
-	int  stat;  /* return status */
+		int  stat;  /* return status */
     int  ncid;  /* netCDF id */
 
     /* dimension ids */
@@ -75,7 +78,7 @@ int main(){
 						
 			/* assign variable data */
  			{
-    		stat = nc_put_var1_float(ncid, Radon_id, &i, &radon);
+    	stat = nc_put_var1_float(ncid, Radon_id, &i, &radon);
    			check_err(stat,__LINE__,__FILE__);
 			stat = nc_put_var1_float(ncid, Error_id, &i, &error);
    			check_err(stat,__LINE__,__FILE__);
@@ -116,7 +119,7 @@ int main(){
   				stat = nc_def_var(ncid, "Error", NC_INT, RANK_data, Error_dims, &Error_id);
   				check_err(stat,__LINE__,__FILE__);
   				Temp_dims[0] = time_dim;
-				stat = nc_def_var(ncid, "Temp", NC_INT, RANK_data, Temp_dims, &Temp_id);
+					stat = nc_def_var(ncid, "Temp", NC_INT, RANK_data, Temp_dims, &Temp_id);
    				check_err(stat,__LINE__,__FILE__);
    				Hum_dims[0] = time_dim;
    				stat = nc_def_var(ncid, "Hum", NC_INT, RANK_data, Hum_dims, &Hum_id);
@@ -183,9 +186,7 @@ int main(){
 				check_err(stat,__LINE__,__FILE__);
 				
 
-   				/* leave define mode */
-   				stat = nc_enddef (ncid);
-   				check_err(stat,__LINE__,__FILE__);
+
 
 
 
@@ -195,11 +196,32 @@ int main(){
 				/* La siguiente linea "debe" ser las unidades*/
 				fgets(linea,MAXLINEA,fid);
 				/* y a parir de ahora leemos lineas de datos */
-				seccionDatos=1;				
-			}else if (strncmp(linea,"RESULTS",strlen("RESULTS"))==0){
-				/* seccion de resultados*/
+				seccionDatos=1;
+
+			}else if (strncmp(linea,"Radon Average",strlen("Radon Average"))==0){
+				sscanf(linea,"Radon Average %lf Bq/m³",&radon_avg);
+				stat=nc_put_att_double(ncid, NC_GLOBAL, "Radon_Average",NC_DOUBLE,1,&radon_avg);
+				check_err(stat,__LINE__,__FILE__);
+			}else if (strncmp(linea,"Average Error",strlen("Average Error"))==0){
+				sscanf(linea,"Average Error	%lf	%",&avg_error);
+				stat=nc_put_att_double(ncid, NC_GLOBAL, "Average_Error",NC_DOUBLE,1,&avg_error);
+				check_err(stat,__LINE__,__FILE__);
+			}else if (strncmp(linea,"Min. Radon	14	Bq/m³",strlen("Min. Radon"))==0){
+				sscanf(linea,"Min. Radon	%lf	Bq/m³",&min_radon);
+				stat=nc_put_att_double(ncid, NC_GLOBAL, "Min_Radon",NC_DOUBLE,1,&min_radon);
+				check_err(stat,__LINE__,__FILE__);
+			}else if (strncmp(linea,"Max. Radon",strlen("Max. Radon"))==0){
+				sscanf(linea,"Max. Radon	%lf	Bq/m³",&max_radon);
+				stat=nc_put_att_double(ncid, NC_GLOBAL, "Max_Radon",NC_DOUBLE,1,&max_radon);
+				check_err(stat,__LINE__,__FILE__);
+			}else if (strncmp(linea,"Radon Exposure",strlen("Radon Exposure"))==0){
+				sscanf(linea,"Radon Exposure	%lf	Bqh/m³",&radon_exposure);
+				stat=nc_put_att_double(ncid, NC_GLOBAL, "Radon_Exposure",NC_DOUBLE,1,&radon_exposure);
+				check_err(stat,__LINE__,__FILE__);
 				
-				
+					/* leave define mode */
+   			stat = nc_enddef (ncid);
+   			check_err(stat,__LINE__,__FILE__);
 				
 				
 				
