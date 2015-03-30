@@ -25,6 +25,7 @@ int main(){
 	int mes,dia,anio,hora,min,alpha;
 	float radon,error,temp,hum,tilt;
 	size_t i=0;
+	int h=0;
 
 	int dimsize;
 	double radon_avg,avg_error,min_radon,max_radon, radon_exposure;
@@ -45,8 +46,14 @@ int main(){
     int Hum_id;
     int Tilt_id;
     int AlphaCounts_id;
+
+		int time_var_id;
+
+
     /* rank (number of dimensions) for each variable */
 #   define RANK_data 1
+
+
     /* variable shapes */
     int Radon_dims[RANK_data];
     int Error_dims[RANK_data];
@@ -54,9 +61,8 @@ int main(){
     int Hum_dims[RANK_data];
     int Tilt_dims[RANK_data];
     int AlphaCounts_dims[RANK_data];
-	/* variable data*/
-    //int Radon_data[time_len];
 
+		int time_var_dims[RANK_data];
 	
 
 	
@@ -90,10 +96,15 @@ int main(){
    			check_err(stat,__LINE__,__FILE__);
 			stat = nc_put_var1_int(ncid, AlphaCounts_id, &i, &alpha);
    			check_err(stat,__LINE__,__FILE__);
+
+			stat = stat = nc_put_var1_int(ncid, time_var_id, &i, &h);
+   			check_err(stat,__LINE__,__FILE__);
+
   			  }
 
-
 			i++;
+			h++;
+
 		}else {
 			
 			// Sacamos numero de registros, longitud de variables
@@ -130,6 +141,10 @@ int main(){
    				AlphaCounts_dims[0] = time_dim;
    				stat = nc_def_var(ncid, "AlphaCounts", NC_INT, RANK_data, AlphaCounts_dims, &AlphaCounts_id);
    				check_err(stat,__LINE__,__FILE__);
+
+   				time_var_dims[0] = time_dim;
+   				stat = nc_def_var(ncid, "time", NC_INT, RANK_data, time_var_dims, &time_var_id);
+   				check_err(stat,__LINE__,__FILE__);					
 
 
 				/* define attributes */
