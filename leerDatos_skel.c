@@ -81,6 +81,16 @@ int main(){
 			sscanf(linea,"%d/%d/%d %d:%d %f %f %f %f %f %d",&mes,&dia,&anio,&hora,&min,&radon,&error,&temp,&hum,&tilt,&alpha);
 			//printf("mes:%d dia:%d anio:%d hora:%d min:%d radon:%g error:%g temp:%g hum:%g til:%g count:%d\n", mes, dia, anio, hora, min, radon, error, temp, hum, tilt, alpha);
 			
+			if(i==0){
+				char time_units[28];
+				snprintf(time_units,sizeof(time_units),"hours since %d/%d/%d %d:%d", dia, mes, anio, hora, min);
+				stat=nc_put_att_text(ncid, time_var_id, "units",strlen(time_units),time_units);
+				check_err(stat,__LINE__,__FILE__);
+					/* leave define mode */
+   			stat = nc_enddef (ncid);
+   			check_err(stat,__LINE__,__FILE__);
+			}
+
 						
 			/* assign variable data */
  			{
@@ -234,9 +244,7 @@ int main(){
 				stat=nc_put_att_double(ncid, NC_GLOBAL, "Radon_Exposure",NC_DOUBLE,1,&radon_exposure);
 				check_err(stat,__LINE__,__FILE__);
 				
-					/* leave define mode */
-   			stat = nc_enddef (ncid);
-   			check_err(stat,__LINE__,__FILE__);
+
 				
 				
 				
