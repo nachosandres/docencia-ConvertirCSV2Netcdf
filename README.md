@@ -1,6 +1,10 @@
 # docencia-ConvertirCSV2Netcdf
 
 ### Commit log
+Description of commits, from most recent to oldest.
+
+#### Added valid ranges and device number
+Set valid ranges/minimum for several variables. Device number added as global attribute.
 
 #### Added time units
 Time now has units attribute "hours since -first measurement-". Command for ending definition moved had to be moved for this.
@@ -11,8 +15,8 @@ Filled time coordinate with hours since first measurement.
 #### Added global attributes
 Data related to the experiment as a whole (average value, etc.) added as global attributes.
 
-#### Added units, title, ancilliary radon-error
-Added unit attributes to variable, title to the whole file, and ancilliary variable relationship between radon concentration measurements and their relative uncertainty.
+#### Added units, title, ancillary radon-error
+Added unit attributes to variable, title to the whole file, and ancillary variable relationship between radon concentration measurements and their relative uncertainty.
 
 #### Added variable long names
 Variables now have long names attributes for description, as well as standard names when this is possible.

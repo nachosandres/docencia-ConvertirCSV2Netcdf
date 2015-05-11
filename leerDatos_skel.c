@@ -27,7 +27,7 @@ int main(){
 	size_t i=0;
 	int h=0;
 
-	int dimsize;
+	int dimsize, device_no;
 	double radon_avg,avg_error,min_radon,max_radon, radon_exposure;
 	
 	/*DECLARATION OF NETCDF VARIABLES*/
@@ -128,6 +128,7 @@ int main(){
    				stat = nc_create("RadonMembrana.nc", NC_CLOBBER, &ncid);
    				check_err(stat,__LINE__,__FILE__);
 
+
    				/* define dimensions */
    				stat = nc_def_dim(ncid, "time", time_len, &time_dim);
    				check_err(stat,__LINE__,__FILE__);
@@ -140,7 +141,7 @@ int main(){
   				stat = nc_def_var(ncid, "Error", NC_INT, RANK_data, Error_dims, &Error_id);
   				check_err(stat,__LINE__,__FILE__);
   				Temp_dims[0] = time_dim;
-					stat = nc_def_var(ncid, "Temp", NC_INT, RANK_data, Temp_dims, &Temp_id);
+					stat = nc_def_var(ncid, "Temp", NC_FLOAT, RANK_data, Temp_dims, &Temp_id);
    				check_err(stat,__LINE__,__FILE__);
    				Hum_dims[0] = time_dim;
    				stat = nc_def_var(ncid, "Hum", NC_INT, RANK_data, Hum_dims, &Hum_id);
@@ -204,13 +205,30 @@ int main(){
 				check_err(stat,__LINE__,__FILE__);
 				stat=nc_put_att_text(ncid, Hum_id, "units",strlen(Hum_units),Hum_units);
 				check_err(stat,__LINE__,__FILE__);
+
+				/* Valid ranges */
+				float percent_range[]={0,100};
+				stat = nc_put_att_float(ncid, Error_id, "valid_range", NC_INT, 2, percent_range);
+   			check_err(stat,__LINE__,__FILE__);
+				stat = nc_put_att_float(ncid, Hum_id, "valid_range", NC_INT, 2, percent_range);
+   			check_err(stat,__LINE__,__FILE__);
+				float Tilt_range[]={0,360};
+				stat = nc_put_att_float(ncid, Tilt_id, "valid_range", NC_INT, 2, Tilt_range);
+   			check_err(stat,__LINE__,__FILE__);
+				float Counts_min=0;
+				stat = nc_put_att_float(ncid, Radon_id, "valid_min", NC_INT, 1, &Counts_min);
+   			check_err(stat,__LINE__,__FILE__);
+				stat = nc_put_att_float(ncid, AlphaCounts_id, "valid_min", NC_INT, 1, &Counts_min);
+   			check_err(stat,__LINE__,__FILE__);
 				
 					/* ancillary variables */
 				char Radon_anc_var[]="Error";
 				stat=nc_put_att_text(ncid, Radon_id, "ancillary_variables",strlen(Radon_anc_var),Radon_anc_var);
 				check_err(stat,__LINE__,__FILE__);
 				
-
+				/* Device number */
+				stat=nc_put_att_int(ncid, NC_GLOBAL, "Device_number", NC_INT, 1, &device_no);
+				check_err(stat,__LINE__,__FILE__);
 
 
 
@@ -222,6 +240,10 @@ int main(){
 				fgets(linea,MAXLINEA,fid);
 				/* y a parir de ahora leemos lineas de datos */
 				seccionDatos=1;
+
+			/* Global attributes */
+			}else if (strncmp(linea,"Device No.",strlen("Device No."))==0){
+				sscanf(linea,"Device No.	%d",&device_no); /* Not in define mode yet */
 
 			}else if (strncmp(linea,"Radon Average",strlen("Radon Average"))==0){
 				sscanf(linea,"Radon Average %lf Bq/m³",&radon_avg);
@@ -243,7 +265,7 @@ int main(){
 				sscanf(linea,"Radon Exposure	%lf	Bqh/m³",&radon_exposure);
 				stat=nc_put_att_double(ncid, NC_GLOBAL, "Radon_Exposure",NC_DOUBLE,1,&radon_exposure);
 				check_err(stat,__LINE__,__FILE__);
-				
+
 
 				
 				
